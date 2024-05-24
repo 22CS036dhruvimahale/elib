@@ -1,17 +1,30 @@
-import express from 'express'
+import express, { NextFunction, Request, Response } from "express";
+import createHttpError, { HttpError } from "http-errors";
+// import { config } from "./config/config";
+import globalErrorHandler from "./middlewares/globalErrorHandler";
+
 //make instance of app
-const app = express();//call what we have imported
+const app = express(); //call what we have imported
 //we are not running server here this is just the setup of express
 
+//ROUTE -THIS ARE THE ENDPOINTS (URLS) which we call from the client
 
-//ROUTE -THIS ARE THE ENDPOINTS (URLS) which we call frpom the client
+app.get("/", (req, res, next) => {
+      // '/' is the router and within bracket is the request handler
 
-app.get('/',(req,res,next)=>{
+      const error = createHttpError(400, "Something went wrong");
+      throw error;
 
-    res.json({message:"welcome to rest api"});//is sends response to the clinet
-
-});// in bracket we write thes egment of theurl if nothing is types then home route is considered
+      res.json({ message: "welcome to rest api" }); //is sends response to the client
+}); // in bracket we write the segment of the url if nothing is types then home route is considered
 //get is the http methods get,post,put,patch,app is the object
 
+//we have shifted the error handler to new file and exported from there and we will import here
+app.use(globalErrorHandler);
 
-export default app;//can run this for testing
+export default app; //can run this for testing
+
+//GLOBAL ERROR HANDLER//
+// it is middleware it should be at last
+// use is used to register our middle ware,it is a function in the javascript
+//in request handler there are 3 request in error there are 4

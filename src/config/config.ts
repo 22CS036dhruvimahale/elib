@@ -6,8 +6,11 @@ const _config = {
       //_ to make the config private
       port: process.env.PORT,
       databaseUrl: process.env.DATABASE_URL || "",
+      env: process.env.NODE_ENV, //node env is used to identify which environment it is dev or production
 };
 export const config = Object.freeze(_config); //freeze is used to make the config read only//
+
+//EXTRA//
 
 //src/config/config.ts
 

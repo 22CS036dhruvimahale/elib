@@ -19,8 +19,8 @@ export const startServer = async () => {
       });
 };
 
-// we have made app in expressin app.ts the on server we have imported it
+// we have made app in express in app.ts the on server we have imported it
 // and we have ren the server at the port
-// -> in json dev-nodemon server .ts  we are running srver fileso it is the the entry point
-// -> whrn it will rumour server will start in express
+// -> in json dev-nodemon server .ts  we are running server file so it is the the entry point
+// -> when it will run our server will start in express
 startServer(); // Call the function to start the server

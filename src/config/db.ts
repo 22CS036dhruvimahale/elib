@@ -11,7 +11,7 @@ const connectDB = async () => {
       try {
             //connect is the method in which we will give the url of the database/connection string
             mongoose.connection.on("connected", () => {
-                  //when db will connect this event wil trigger and it will be callbacked
+                  //when db will connect this event wil trigger and it will be call backed
                   console.log("connected to database successfully"); //this will be the initial error
             });
 
