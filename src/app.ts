@@ -8,6 +8,8 @@ import userRouter from "./user/userRouter";
 const app = express(); //call what we have imported
 //we are not running server here this is just the setup of express
 
+app.use(express.json()); //this is the middleware for json
+
 //ROUTE -THIS ARE THE ENDPOINTS (URLS) which we call from the client
 
 app.get("/", (req, res, next) => {
