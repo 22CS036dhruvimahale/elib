@@ -1,7 +1,8 @@
 import express, { NextFunction, Request, Response } from "express";
-import createHttpError, { HttpError } from "http-errors";
+///import createHttpError, { HttpError } from "http-errors";
 // import { config } from "./config/config";
 import globalErrorHandler from "./middlewares/globalErrorHandler";
+import userRouter from "./user/userRouter";
 
 //make instance of app
 const app = express(); //call what we have imported
@@ -12,13 +13,14 @@ const app = express(); //call what we have imported
 app.get("/", (req, res, next) => {
       // '/' is the router and within bracket is the request handler
 
-      const error = createHttpError(400, "Something went wrong");
-      throw error;
+      //   const error = createHttpError(400, "Something went wrong");
+      //   throw error;
 
-      res.json({ message: "welcome to rest api" }); //is sends response to the client
+      res.json({ message: "welcome to elib api" }); //is sends response to the client
 }); // in bracket we write the segment of the url if nothing is types then home route is considered
 //get is the http methods get,post,put,patch,app is the object
 
+app.use("/api/users", userRouter);
 //we have shifted the error handler to new file and exported from there and we will import here
 app.use(globalErrorHandler);
 
