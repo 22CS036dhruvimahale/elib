@@ -1,20 +1,39 @@
 import { Request, Response, NextFunction } from "express";
 import createHttpError from "http-errors";
+import bcrypt from "bcrypt";
+import userModel from "./userModel";
 
 const createUser = async (req: Request, res: Response, next: NextFunction) => {
       // async / await is to simplify the syntax necessary to consume promise-based APIs
-      const { name, email, password } = req.body; //get the fields from  the postman where we have enterd this data on the request filed on body named property(req.body.name)
+      const { name, email, password } = req.body; //get the fields from  the postman where we have entered this data on the request filed on body named property(req.body.name)
 
-      //validation
+      //1-validation
       if (!name || !email || !password) {
             //if client do not enters the filed then we will return them
 
             const error = createHttpError(400, "All fields are required"); //400 is the status code which will pop up there 400 is for client error because they have given incomplete info
 
-            //return res.json({message:"All fields are required"});//insteadof this will will craete an error and then pass the error in return
+            //return res.json({message:"All fields are required"});//instead of this will will crate an error and then pass the error in return
             return next(error); //this will send from the global error handler
       }
 
+      //DATABASE
+
+      const user = await userModel.findOne({ email: email }); //which record we want to search,if value of object  and key is same then we can write it as  ({email})
+      //it will return a document or null,if doc means user is already present
+      if (user) {
+            const error = createHttpError(
+                  400,
+                  "user already exists with this email"
+            );
+            return next(error);
+      }
+
+      //to store user
+      //->password-hash(we need to hash password using library bcrypt)
+
+      const hashedPassword = await bcrypt.hash(password, 10); //by hovering we can see that it returns promise ,means we can use await here it is an asynchronous method
+      //10 is the salt round number to reduce concurrent hashes bigger the no. more security
       res.json({ message: "User Created" });
 };
 
