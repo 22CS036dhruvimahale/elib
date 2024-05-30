@@ -2,6 +2,8 @@ import { Request, Response, NextFunction } from "express";
 import createHttpError from "http-errors";
 import bcrypt from "bcrypt";
 import userModel from "./userModel";
+import { sign } from "jsonwebtoken";
+import { config } from "../config/config";
 
 const createUser = async (req: Request, res: Response, next: NextFunction) => {
       // async / await is to simplify the syntax necessary to consume promise-based APIs
@@ -34,7 +36,24 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
 
       const hashedPassword = await bcrypt.hash(password, 10); //by hovering we can see that it returns promise ,means we can use await here it is an asynchronous method
       //10 is the salt round number to reduce concurrent hashes bigger the no. more security
-      res.json({ message: "User Created" });
+      //this is an authentication system
+      const newUser = await userModel.create({
+            name,
+
+            email,
+
+            password: hashedPassword,
+      });
+
+      //generating tokens JWT
+      const token = sign({ sub: newUser._id }, config.jwtSecret as string, {
+            expiresIn: "7d",
+            algorithm: "HS256",
+      }); //first obj is  payload ,sub is sub property users id 2nd para meter is secrete which we keep in config
+      //sign is not a promise fun means it is synchrony so no need to add await
+      // res.json({ message: "User Created" });//we will return the mongos id
+      //   res.json({ id : newUser.id});
+      res.json({ accessToken: token });
 };
 
 export { createUser }; //if we will not export then anyone cant access
