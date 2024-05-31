@@ -4,6 +4,7 @@ import bcrypt from "bcrypt";
 import userModel from "./userModel";
 import { sign } from "jsonwebtoken";
 import { config } from "../config/config";
+import { User } from "./userTypes";
 
 const createUser = async (req: Request, res: Response, next: NextFunction) => {
       // async / await is to simplify the syntax necessary to consume promise-based APIs
@@ -21,14 +22,19 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
 
       //DATABASE
 
-      const user = await userModel.findOne({ email: email }); //which record we want to search,if value of object  and key is same then we can write it as  ({email})
-      //it will return a document or null,if doc means user is already present
-      if (user) {
-            const error = createHttpError(
-                  400,
-                  "user already exists with this email"
-            );
-            return next(error);
+      try {
+            const user = await userModel.findOne({ email: email }); //which record we want to search,if value of object  and key is same then we can write it as  ({email})
+            //it will return a document or null,if doc means user is already present
+
+            if (user) {
+                  const error = createHttpError(
+                        400,
+                        "user already exists with this email"
+                  );
+                  return next(error);
+            }
+      } catch (err) {
+            return next(createHttpError(500, "error while getting user")); //500 server error
       }
 
       //to store user
@@ -37,23 +43,41 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
       const hashedPassword = await bcrypt.hash(password, 10); //by hovering we can see that it returns promise ,means we can use await here it is an asynchronous method
       //10 is the salt round number to reduce concurrent hashes bigger the no. more security
       //this is an authentication system
-      const newUser = await userModel.create({
-            name,
 
-            email,
+      let newUser: User;
 
-            password: hashedPassword,
-      });
+      try {
+            newUser = await userModel.create({
+                  name,
+
+                  email,
+
+                  password: hashedPassword,
+            });
+      } catch (err) {
+            return next(createHttpError(500, "error while getting user"));
+      }
 
       //generating tokens JWT
-      const token = sign({ sub: newUser._id }, config.jwtSecret as string, {
-            expiresIn: "7d",
-            algorithm: "HS256",
-      }); //first obj is  payload ,sub is sub property users id 2nd para meter is secrete which we keep in config
-      //sign is not a promise fun means it is synchrony so no need to add await
-      // res.json({ message: "User Created" });//we will return the mongos id
-      //   res.json({ id : newUser.id});
-      res.json({ accessToken: token });
+      try {
+            const token = sign(
+                  { sub: newUser._id },
+                  config.jwtSecret as string,
+                  {
+                        expiresIn: "7d",
+                        algorithm: "HS256",
+                  }
+            ); //first obj is  payload ,sub is sub property users id 2nd para meter is secrete which we keep in config
+            //sign is not a promise fun means it is synchrony so no need to add await
+
+            // res.json({ message: "User Created" });//we will return the mongos id
+            //   res.json({ id : newUser.id});
+            res.json({ accessToken: token });
+      } catch (err) {
+            return next(
+                  createHttpError(500, "error while signing the jwt token")
+            );
+      }
 };
 
 export { createUser }; //if we will not export then anyone cant access
