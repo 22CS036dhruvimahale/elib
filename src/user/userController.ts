@@ -72,12 +72,10 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
 
             // res.json({ message: "User Created" });//we will return the mongos id
             //   res.json({ id : newUser.id});
-            res.json({ accessToken: token });
+            res.status(201).json({ accessToken: token }); //201 for creteing user
       } catch (err) {
             return next(
                   createHttpError(500, "error while signing the jwt token")
             );
       }
 };
-
-export { createUser }; //if we will not export then anyone cant access
