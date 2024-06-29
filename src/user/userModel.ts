@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema<User>( //  <> within this there is generi
             },
       },
 
-      { timestamps: true } //SECOND PARAMETER , record is crete in  db there will be  two extra fields created add and updated add(sort the data in asc dec ,know the records)
+      { timestamps: true } //SECOND PARAMETER , record is crete in  db there will be  two extra fields created AT and updated AT (sort the data in asc dec ,know the records)
 );
 //creating a method here
 

@@ -1,6 +1,6 @@
 // ROUTER IS USED TO SEND THE REQUEST
 import express from "express";
-import { createUser } from "./userController";
+import { createUser, loginUser } from "./userController";
 
 const userRouter = express.Router(); //method call
 
@@ -16,5 +16,7 @@ const userRouter = express.Router(); //method call
 // after createing we can write it as
 
 userRouter.post("/register", createUser); //we will pass the parameter directly
+
+userRouter.post("/login", loginUser);
 
 export default userRouter;
