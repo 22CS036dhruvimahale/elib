@@ -3,6 +3,7 @@ import express, { NextFunction, Request, Response } from "express";
 // import { config } from "./config/config";
 import globalErrorHandler from "./middlewares/globalErrorHandler";
 import userRouter from "./user/userRouter";
+import bookRouter from "./book/bookRouter";
 
 //make instance of app
 const app = express(); //call what we have imported
@@ -23,6 +24,8 @@ app.get("/", (req, res, next) => {
 //get is the http methods get,post,put,patch,app is the object
 
 app.use("/api/users", userRouter);
+
+app.use('/api/books',bookRouter)
 //we have shifted the error handler to new file and exported from there and we will import here
 app.use(globalErrorHandler);
 
